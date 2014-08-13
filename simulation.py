@@ -30,8 +30,7 @@ def findParticle(particles, x, y):
 			return p
 	return None
 
-		
-		
+
 class Particle():
 	def __init__(self, (x, y), size):
 		self.x = x
@@ -117,7 +116,7 @@ class Particle():
 		self.speed = walking_speed
 		self.state = "roam"
 	
-	def engage(self):
+	def engage(self,target):
 		self.speed = 0
 		self.state = "engaged"
 	
@@ -127,7 +126,6 @@ class Particle():
 			self.roam()
 		else:
 			self.check_phone()
-
 	
 	def interact(self, p2):
 		"""Changes to implement: slow down when approaching? but better, switch to state "engaged" if popularity score is higher..."""
@@ -142,13 +140,13 @@ class Particle():
 			if self.state == "phone":
 				fame_diff -= 1 #harder to engage someone when they're on the phone. 
 			if fame_diff > 0:
-				self.engage()
+				self.engage(p2)
 			elif -fame_diff < random.randrange(10):
-				self.engage()
+				self.engage(p2)
 			else:
 				self.disengage()
 		if self.state == "engaged" and p2.state == "engaged": # mark as having 
-			engage_list.append([self.id,p2.id,pygame.time.get_ticks()])
+			add_to_edges(self.id,p2.id,pygame.time.get_ticks())
 		
 		#This is collision
 		if dist < self.size + p2.size:
@@ -195,9 +193,9 @@ phone_image.set_colorkey((255,255,255))
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Conference Simulation by Nelson Auner')
 
-number_of_particles = 100
-my_particles = []
 
+
+# Initialize particles and the timestamps!
 for n in range(number_of_particles):
 	size = 10
 	x = random.randint(size, width-size)
@@ -207,11 +205,10 @@ for n in range(number_of_particles):
 	particle.speed = random.random()
 	particle.get_goal(conferences)
 	particle.fame = random.randrange(1,10)
-
 	my_particles.append(particle)
+	
 
 
-selected_particle = None
 running = True
 while running:
 	for event in pygame.event.get():

@@ -18,3 +18,5 @@ prob_phone_to_roam = .1
 duration_phone = 5 #average duration of phone use
 walking_speed = 5
 engage_distance = 1.5 # (distance required to engage)
+number_of_particles = 100
+edges_data = []
