@@ -2,7 +2,7 @@
 ##
 ##csv should be node1,node2,time
 ##want a list of graphs (easy) and links (not easy) 
-
+import json
 import csv
 node_list = []
 edge_list = []
