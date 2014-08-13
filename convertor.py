@@ -45,8 +45,9 @@ with open('ConferenceSimulation.csv', 'rb') as f:
 	for row in reader:
 		i += 1
 		 #just to track the progress
-		if i % 1000 == 0:
+		if i == 10000:
 			print i
+			break
 		#increase the weight of both the first and 2nd ids. 
 		add_to_node_list(row[1])
 		add_to_node_list(row[2])
