@@ -4,8 +4,7 @@ background_colour = (255,255,255)
 room_1 = 200
 room_2 = 600
 
-width = 800
-height = 800
+(width, height) = (800, 800)
 LIME = (153, 255, 0) 
 drag = 0.999
 elasticity = 1
