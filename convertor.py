@@ -59,4 +59,4 @@ with open('result_edges.json','w') as f_edges:
 	f_edges.write(json.dumps(edge_list))
 
 with open('result_nodes.json','w') as f_nodes:
-	f_nodes.write(json.dumps(nodes_list))
+	f_nodes.write(json.dumps(node_list))
