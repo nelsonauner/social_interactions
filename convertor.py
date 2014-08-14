@@ -42,6 +42,7 @@ def add_to_edge_list(row):
 def main(argv):
 	inputfile = ''
 	outputfile = ''
+	number_to_parse = 0
 	print argv
 	try:
 		opts, args = getopt.getopt(argv,"hn:i:",["ifile=","ofile="])
