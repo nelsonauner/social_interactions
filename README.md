@@ -1,7 +1,7 @@
 Social Interactions
 ===================
 
-#Simulate Social Interaction Data
+###Simulate Social Interaction Data
 
 Usage: 
 
@@ -14,7 +14,7 @@ $python simulation.py -o output_file.csv
 Simply close the window to terminate the simulation. 
 The results will be stored in output_file.csv
 
-#Parsing Interaction Data
+###Parsing Interaction Data
 
 To convert interaction data to a JSON file of nodes and edges data:
 
