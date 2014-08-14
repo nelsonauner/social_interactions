@@ -23,7 +23,6 @@ def find_two(lst, key, value):
 			return i
 	return -1
 
-
 def add_to_node_list(id_number):
 	index = find(node_list,"id",id_number)
 	if index >= 0:
@@ -37,7 +36,6 @@ def add_to_edge_list(row):
 		edge_list[index]['timestamps'].append(row[2])
 	else:
 		edge_list.append({'id1':row[0],'id2':row[1],'timestamps':[row[2]]})
-
 
 def main(argv):
 	inputfile = ''

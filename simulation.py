@@ -3,7 +3,7 @@ import random
 import math
 import os,sys
 from pygame.locals import *
-import csv 
+import csv,json
 if not pygame.font: print 'Warning, fonts disabled'
 pygame.font.init()
 #------------------------------------------------------------
@@ -54,16 +54,27 @@ class Particle():
 	def try_font(self):
 		if pygame.font:
 			font = pygame.font.Font(None, 17)
-			text = font.render("hey", 1, (10, 10, 200))
+			text = font.render("hey", 1, (10, 10, 10))
 			screen.blit(text, (self.x-9,self.y-5))
 
 	def display(self):
 		if self.state == "phone":
 			screen.blit(phone_image,(self.x-5,self.y-5))
 		else:
-			pygame.draw.circle(screen, self.colour, (int(self.x), int(self.y)), self.size, self.thickness)
+			pygame.draw.circle(screen, self.color_rule(), (int(self.x), int(self.y)), self.size, self.thickness)
 			if self.state == "engaged":
 				self.try_font()		
+	
+	def color_rule(self):
+		"""This should return what size to color the person based on desired attributes (fame, division, etc) """
+		#return tuple([i*(float(self.fame)/10.0) for i in self.colour])
+		if self.group == 1: 
+			return (255,0,0)
+		elif self.group == 2:
+			return (0,255,0)
+		elif self.group == 3:
+			return (0,0,255)
+	
 	
 	def get_goal(self,conferences):
 		""" sets self.goal """
@@ -139,12 +150,14 @@ class Particle():
 		if dist < self.size+p2.size+engage_distance:
 			self.bored = 0
 		#draw engagement from the difference between status. -> if higher status, engage, if not, engage with probability proportional to status
-			fame_diff = p2.fame - self.fame
+			affinity_score= p2.fame - self.fame
+			if self.group == p2.group:
+				affinity_score += affinity_parameter
 			if self.state == "phone":
-				fame_diff -= 1 #harder to engage someone when they're on the phone. 
-			if fame_diff > 0:
-				self.engage(p2)
-			elif -fame_diff < random.randrange(10):
+				affinity_score -= phone_penalty #harder to engage someone when they're on the phone. 
+			if affinity_score>= 0:
+				self.engage(p2)          #TO DO: make these more stochastic..
+			elif -affinity_score < random.randrange(friendly_parameter):
 				self.engage(p2)
 			else:
 				self.disengage()
@@ -200,6 +213,8 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Conference Simulation by Nelson Auner')
 edges_data = []
 my_particles = []
+node_details = []
+
 # Initialize particles and the timestamps!
 for n in range(number_of_particles):
 	size = 10
@@ -210,8 +225,10 @@ for n in range(number_of_particles):
 	particle.speed = random.random()
 	particle.get_goal(conferences)
 	particle.fame = random.randrange(1,10)
+	particle.group = random.randrange(1,number_of_groups+1)
 	my_particles.append(particle)
-	
+	node_details.append({"id" : n, "group" : particle.group, "fame" : particle.fame})
+print(node_details)
 
 
 running = True
@@ -248,4 +265,8 @@ while running:
 with open(file_dir+"\ConferenceSimulation.csv", "wb") as f:
 	writer = csv.writer(f)
 	writer.writerows(engage_list)
+	f.close()
+	
+with open(file_dir+"\Node_Data.json", "wb") as f:
+	f.write(json.dumps(node_details))
 	f.close()
