@@ -1,16 +1,8 @@
+from parameters import * 
 import pygame
 import random
 import math
 import os,sys
-from pygame.locals import *
-import csv 
-if not pygame.font: print 'Warning, fonts disabled'
-pygame.font.init()
-#------------------------------------------------------------
-from parameters import * #I know, I know, terrible form. Sue me. 
-#------------------------------------------------------------
-
-
 
 
 def distance(tuple1,tuple2):
@@ -149,7 +141,7 @@ class Particle():
 			else:
 				self.disengage()
 		if self.state == "engaged" and p2.state == "engaged": # mark as having 
-			edges_data.append([self.id,p2.id,pygame.time.get_ticks()])
+			add_to_edges(self.id,p2.id,pygame.time.get_ticks())
 		
 		#This is collision
 		if dist < self.size + p2.size:
@@ -171,81 +163,3 @@ class Particle():
 		else:
 			self.bored = 1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#get working directory path
-full_path = os.path.realpath(__file__)
-file_dir = os.path.dirname(full_path)
-
-pygame.init()
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode([width, height])
-background_image = pygame.image.load(file_dir+"\sc14background.png").convert()
-phone_image = pygame.image.load(file_dir+"\phone.png").convert()
-phone_image.set_colorkey((255,255,255))
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption('Conference Simulation by Nelson Auner')
-edges_data = []
-my_particles = []
-# Initialize particles and the timestamps!
-for n in range(number_of_particles):
-	size = 10
-	x = random.randint(size, width-size)
-	y = random.randint(210, 590)
-	particle = Particle((x, y), size)
-	particle.id = n
-	particle.speed = random.random()
-	particle.get_goal(conferences)
-	particle.fame = random.randrange(1,10)
-	my_particles.append(particle)
-	
-
-
-running = True
-while running:
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			running = False
-			
-		# elif event.type == pygame.MOUSEBUTTONDOWN:
-			# (mouseX, mouseY) = pygame.mouse.get_pos()
-			# selected_particle = findParticle(my_particles, mouseX, mouseY)
-		# elif event.type == pygame.MOUSEBUTTONUP:
-			# selected_particle = None
-
-	# if selected_particle:
-		# (mouseX, mouseY) = pygame.mouse.get_pos()
-		# dx = mouseX - selected_particle.x
-		# dy = mouseY - selected_particle.y
-		# selected_particle.angle = 0.5*math.pi + math.atan2(dy, dx)
-		# selected_particle.speed = math.hypot(dx, dy) * 0.1
-
-	#screen.fill(background_colour)
-	screen.blit(background_image, [0, 0])
-	for i, particle in enumerate(my_particles):
-		particle.get_goal(conferences)  #draw from distribution, take conferences into effect
-		particle.move()  #towards the goal
-		particle.bounce()
-		for particle2 in my_particles[i+1:]:
-			particle.interact(particle2)
-		particle.display()
-	msElapsed = clock.tick(45)
-	pygame.display.flip()
-
-with open(file_dir+"\ConferenceSimulation.csv", "wb") as f:
-	writer = csv.writer(f)
-	writer.writerows(engage_list)
-	f.close()
