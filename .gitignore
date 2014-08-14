@@ -1,5 +1,12 @@
+# Nelson Specific #
+###################
+*.log
+*.aux
+*.synctex.gz
 ConferenceSimulations.csv
 *.pyc
+
+
 
 
 # Compiled source #
