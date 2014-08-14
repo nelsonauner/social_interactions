@@ -8,6 +8,7 @@ import sys, getopt
 node_list = []
 edge_list = []
 
+
 def find(lst, key, value):
 	"""Input: list of dics, a possible key and value for a given dic. Output: index #"""
 	for i, dic in enumerate(lst):
@@ -17,25 +18,29 @@ def find(lst, key, value):
 
 	
 def find_two(lst, key, value):
-	"""Input: list of dics, two keys and two values for a given dic to match on."""
+	"""Input: list of dics, two keys and two values for a given dic to match on. Output is index number"""
 	for i, dic in enumerate(lst):
 		if dic[key[0]] == value[0] and dic[key[1]] == value[1]:
 			return i
 	return -1
 
-def add_to_node_list(id_number):
+def add_to_node_list(id_number,nodes_detail):
 	index = find(node_list,"id",id_number)
 	if index >= 0:
-		node_list[index]['weight'] += 1
+		node_list[index]['w'] += 1
 	else:
-		node_list.append({'id':id_number,'weight':1})
+		##HERE WE NEED TO ADD METADATA!
+		this_node_data = nodes_detail[int(id_number)] #since these are stored in a list of nodes, [id_number] accesses the correct dictionary
+		this_node_data['w'] = 1
+		#print json.dumps(this_node_data)
+		node_list.append(this_node_data)
 
 def add_to_edge_list(row):
-	index = find_two(edge_list,key = ["id1","id2"], value = row[0:2])
+	index = find_two(edge_list,key = ["sourceId","targetId"], value = row[0:2])
 	if index >= 0:
 		edge_list[index]['timestamps'].append(row[2])
 	else:
-		edge_list.append({'id1':row[0],'id2':row[1],'timestamps':[row[2]]})
+		edge_list.append({'sourceId':row[0],'targetId':row[1],'timestamps':[row[2]]})
 
 def main(argv):
 	inputfile = ''
@@ -43,7 +48,7 @@ def main(argv):
 	number_to_parse = 0
 	print argv
 	try:
-		opts, args = getopt.getopt(argv,"hn:i:",["ifile=","ofile="])
+		opts, args = getopt.getopt(argv,"hn:i:d:",["ifile=","ofile="])
 	except getopt.GetoptError:
 		print 'error: test.py -i <inputfile> -n <number_to_parse>'
 		sys.exit(2)
@@ -54,11 +59,14 @@ def main(argv):
 		elif opt in ("-i", "--ifile"):
 			inputfile = arg
 		elif opt in ("-n", "--ofile"):
-			number_to_parse = arg
-	print 'Input file is "', inputfile
-	print 'number is "', number_to_parse
+			number_to_parse = int(arg)  #close call, pal!
+		elif opt in ("-d", "--ofile"):
+			nodes_detail_file = arg
+	print 'Input file is ', inputfile
+	print 'number is ', number_to_parse
 	## Go through the list of interactions and add them to our edges and graph files ##
 	with open(inputfile, 'rb') as f:
+		nodes_detail = json.loads(open(nodes_detail_file,'r').read())
 		reader = csv.reader(f)
 		i = 0 #just to say hi
 		for row in reader:
@@ -70,8 +78,8 @@ def main(argv):
 				print("parsing complete")
 				break
 			#increase the weight of both the first and 2nd ids. 
-			add_to_node_list(row[0])
-			add_to_node_list(row[1])
+			add_to_node_list(row[0],nodes_detail)
+			add_to_node_list(row[1],nodes_detail)
 			add_to_edge_list(row)
 	##Now we print the results to two files##
 	with open('result_edges.json','w') as f_edges:

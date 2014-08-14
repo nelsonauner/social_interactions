@@ -162,7 +162,7 @@ class Particle():
 			else:
 				self.disengage()
 		if self.state == "engaged" and p2.state == "engaged": # mark as having 
-			edges_data.append([self.id,p2.id,pygame.time.get_ticks()])
+			engage_list.append([self.id,p2.id,pygame.time.get_ticks()])
 		
 		#This is collision
 		if dist < self.size + p2.size:
@@ -211,7 +211,7 @@ phone_image = pygame.image.load(file_dir+"\phone.png").convert()
 phone_image.set_colorkey((255,255,255))
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Conference Simulation by Nelson Auner')
-edges_data = []
+engage_list = []
 my_particles = []
 node_details = []
 
@@ -265,6 +265,7 @@ while running:
 with open(file_dir+"\ConferenceSimulation.csv", "wb") as f:
 	writer = csv.writer(f)
 	writer.writerows(engage_list)
+	print("engage_list printed...")
 	f.close()
 	
 with open(file_dir+"\Node_Data.json", "wb") as f:
