@@ -25,7 +25,7 @@ def find_two(lst, key, value):
 	return -1
 
 def add_to_node_list(id_number,nodes_detail):
-	index = find(node_list,"id",id_number)
+	index = find(node_list,"id",int(id_number))
 	if index >= 0:
 		node_list[index]['w'] += 1
 	else:
@@ -36,11 +36,11 @@ def add_to_node_list(id_number,nodes_detail):
 		node_list.append(this_node_data)
 
 def add_to_edge_list(row):
-	index = find_two(edge_list,key = ["sourceId","targetId"], value = row[0:2])
+	index = find_two(edge_list,key = ["sourceId","targetId"], value = [int(i) for i in row[0:2]])
 	if index >= 0:
 		edge_list[index]['timestamps'].append(row[2])
 	else:
-		edge_list.append({'sourceId':row[0],'targetId':row[1],'timestamps':[row[2]]})
+		edge_list.append({'sourceId':int(row[0]),'targetId':int(row[1]),'timestamps':[row[2]]})
 
 def main(argv):
 	inputfile = ''
